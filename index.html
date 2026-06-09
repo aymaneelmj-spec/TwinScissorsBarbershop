@@ -2,34 +2,12 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-
-    <!-- Favicon — multiple formats for all browsers -->
-    <link rel="icon" type="image/png" sizes="32x32" href="/gallery/barbershoplogo.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="/gallery/barbershoplogo.png" />
-    <link rel="shortcut icon" href="/gallery/barbershoplogo.png" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/gallery/barbershoplogo.png" />
-
+    <!-- ✅ FIXED: Correct favicon path pointing to /gallery/barbershop.ico -->
+    <link rel="icon" type="image/x-icon" href="/gallery/barbershop.ico" />
+    <link rel="shortcut icon" type="image/x-icon" href="/gallery/barbershop.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#09090b" />
-
-    <!-- Clean title — no emojis -->
-    <title>| TWIN SCISSORS Barber |</title>
-    <meta name="description" content="Premium barbershop in  Manama , Bahrain. Book your appointment online." />
-
-    <!-- Force dark BEFORE React loads — zero white flash on any device -->
-    <style>
-      *, *::before, *::after { box-sizing: border-box; }
-      html, body { 
-        background-color: #09090b; 
-        margin: 0; 
-        padding: 0;
-        overflow-x: hidden;
-        max-width: 100vw;
-      }
-      /* Prevent layout shift while fonts load */
-      body { font-display: swap; }
-    </style>
-    <script>document.documentElement.classList.add('dark');</script>
+    <title>Twin Scissors Barbershop – Bahrain</title>
+    <meta name="description" content="Premium grooming and professional barber services in Bahrain. Book your appointment at Twin Scissors Barbershop." />
   </head>
   <body>
     <div id="root"></div>

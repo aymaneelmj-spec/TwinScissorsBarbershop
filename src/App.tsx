@@ -688,21 +688,36 @@ function ChatInterface({ isRTL, t }: { isRTL: boolean; t: any }) {
         ? `أنت مساعد حجز ذكي لـ Twin Scissors Barbershop في البحرين. مهمتك مساعدة العملاء في الحجز وإعطاء معلومات عن الخدمات والأسعار. الخدمات: قص الشعر 11 BD، حلاقة 5.5 BD، تصفيف شعر 7.7 BD، صباغة شعر 27.5 BD، تقشير الرأس 7.7/16.5 BD، العناية بالوجه 27.5 BD، تقشير الوجه 5.5 BD، مانيكير 11 BD، بديكير 13.2 BD، تقشير القدم 5.5 BD، تدليك القدم 5.5 BD، قص أظافر اليد 3.3 BD، قص أظافر القدم 4.4 BD. ساعات العمل: الاثنين-الجمعة 10 ص-9 م، السبت 10 ص-9 م، الأحد 10 ص-7:30 م. للحجز: https://wa.me/97317000900. العنوان: Rd 4625, Manama 973, Bahrain. كن ودودًا ومهنيًا وأجب باللغة العربية.`
         : `You are a smart booking assistant for Twin Scissors Barbershop in Bahrain. Help customers book appointments and provide info about services and prices. Services: Hair Cut 11 BD, Shave 5.5 BD, Hair Style 7.7 BD, Hair Color 27.5 BD, Scalp Scraping 7.7/16.5 BD, Facial 27.5 BD, Face Scraping 5.5 BD, Manicure 11 BD, Pedicure 13.2 BD, Foot Scraping 5.5 BD, Foot Massage 5.5 BD, Hand Nails Cutting 3.3 BD, Foot Nails Cutting 4.4 BD. Hours: Mon-Sat 10 AM-9 PM, Sun 10 AM-7:30 PM. To book: https://wa.me/97317000900. Address: Rd 4625, Manama 973, Bahrain. Be friendly, professional.`;
 
-      const res = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          model: 'claude-sonnet-4-20250514',
-          max_tokens: 1000,
-          system: systemPrompt,
-          messages: [
-            ...messages.map(m => ({ role: m.role === 'user' ? 'user' : 'assistant', content: m.text })),
-            { role: 'user', content: text },
-          ],
-        }),
-      });
+      // Build conversation history for Gemini multi-turn format
+      const history = messages
+        .slice(0, -0) // all messages so far (before new user msg)
+        .map(m => ({
+          role: m.role === 'user' ? 'user' : 'model',
+          parts: [{ text: m.text }],
+        }));
+      // Add the new user message at the end
+      const contents = [...history, { role: 'user', parts: [{ text }] }];
+
+      const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+      if (!apiKey) throw new Error('Missing VITE_GEMINI_API_KEY');
+
+      const res = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            system_instruction: { parts: [{ text: systemPrompt }] },
+            contents,
+            generationConfig: { maxOutputTokens: 600, temperature: 0.7 },
+          }),
+        }
+      );
       const data = await res.json();
-      const reply = data.content?.[0]?.text || (isRTL ? 'عذراً، حدث خطأ.' : 'Sorry, something went wrong.');
+      if (!res.ok) throw new Error(data?.error?.message || 'Gemini error');
+      const reply =
+        data.candidates?.[0]?.content?.parts?.[0]?.text ||
+        (isRTL ? 'عذراً، حدث خطأ.' : 'Sorry, something went wrong.');
       setMessages(prev => [...prev, { role: 'bot', text: reply }]);
     } catch {
       setMessages(prev => [...prev, { role: 'bot', text: isRTL ? 'تعذر الاتصال. يرجى المحاولة مجدداً.' : 'Connection failed. Please try again.' }]);
@@ -887,9 +902,11 @@ export default function App() {
                 <div className={`flex items-center gap-2 ${isRTL ? 'border-r pr-6' : 'border-l pl-6'}`}
                   style={{ borderColor: 'rgba(201,168,76,0.15)' }}>
                   <button onClick={toggleLang}
-                    className="px-3 py-1.5 rounded-lg text-[10px] font-black tracking-widest transition-all hover:scale-105"
-                    style={{ background: 'rgba(201,168,76,0.08)', border: `1px solid rgba(201,168,76,0.2)`, color: BRAND.gold }}>
-                    {i18n.language === 'ar' ? 'EN' : 'ع'}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-black tracking-widest transition-all hover:scale-105"
+                    style={{ background: 'rgba(201,168,76,0.08)', border: `1px solid rgba(201,168,76,0.2)`, color: BRAND.gold }}
+                    title={i18n.language === 'ar' ? 'Switch to English' : 'التبديل إلى العربية'}>
+                    <span className="text-base leading-none">{i18n.language === 'ar' ? '🇬🇧' : '🇸🇦'}</span>
+                    <span>{i18n.language === 'ar' ? 'EN' : 'ع'}</span>
                   </button>
                 </div>
               </div>
@@ -897,9 +914,11 @@ export default function App() {
               {/* Mobile controls */}
               <div className="flex lg:hidden items-center gap-2">
                 <button onClick={toggleLang}
-                  className="px-3 py-1.5 rounded-lg text-[10px] font-black tracking-widest"
-                  style={{ background: 'rgba(201,168,76,0.08)', border: `1px solid rgba(201,168,76,0.2)`, color: BRAND.gold }}>
-                  {i18n.language === 'ar' ? 'EN' : 'ع'}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-black tracking-widest"
+                  style={{ background: 'rgba(201,168,76,0.08)', border: `1px solid rgba(201,168,76,0.2)`, color: BRAND.gold }}
+                  title={i18n.language === 'ar' ? 'Switch to English' : 'التبديل إلى العربية'}>
+                  <span className="text-base leading-none">{i18n.language === 'ar' ? '🇬🇧' : '🇸🇦'}</span>
+                  <span>{i18n.language === 'ar' ? 'EN' : 'ع'}</span>
                 </button>
                 <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="p-2 text-zinc-300">
                   {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -1090,7 +1109,7 @@ export default function App() {
           target="_blank" rel="noopener noreferrer"
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
-          className={`fixed bottom-6 ${isRTL ? 'left-6' : 'right-6'} z-50 flex items-center justify-center w-14 h-14 rounded-full shadow-2xl hover:scale-110 transition-transform`}
+          className="fixed bottom-6 right-6 z-50 flex items-center justify-center w-14 h-14 rounded-full shadow-2xl hover:scale-110 transition-transform"
           style={{ background: '#25D366', boxShadow: '0 0 30px rgba(37,211,102,0.5)' }}
           aria-label="Contact on WhatsApp">
           <svg viewBox="0 0 24 24" className="w-7 h-7" fill="white" xmlns="http://www.w3.org/2000/svg">
