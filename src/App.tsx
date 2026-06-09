@@ -103,14 +103,14 @@ function LoadingScreen({ isRTL }: { isRTL: boolean }) {
         <motion.div
           animate={{ rotate: 360 }}
           transition={{ duration: 4, repeat: Infinity, ease: 'linear' }}
-          className="absolute w-44 h-44 rounded-full"
+          className="absolute w-64 h-64 rounded-full"
           style={{
             background: `conic-gradient(from 0deg, ${BRAND.gold}, ${BRAND.goldDark}, #fff2, ${BRAND.goldLight}, ${BRAND.gold})`,
-            padding: 3, filter: 'blur(0.5px)',
+            padding: 4, filter: 'blur(0.5px)',
           }}
         />
-        <div className="relative z-10 w-40 h-40 rounded-full flex items-center justify-center"
-          style={{ background: BRAND.bg, boxShadow: 'inset 0 0 40px rgba(0,0,0,0.9)' }}>
+        <div className="relative z-10 w-60 h-60 rounded-full flex items-center justify-center"
+          style={{ background: BRAND.bg, boxShadow: 'inset 0 0 60px rgba(0,0,0,0.9)' }}>
           <motion.div
             initial={{ opacity: 0, scale: 0.7 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -118,21 +118,24 @@ function LoadingScreen({ isRTL }: { isRTL: boolean }) {
             <img
               src="/gallery/logo.webp"
               alt="Twin Scissors"
-              className="w-28 h-28 object-contain"
+              className="w-48 h-48 object-contain"
               onError={e => {
                 const img = e.target as HTMLImageElement;
-                img.style.display = 'none';
-                const fb = img.nextElementSibling as HTMLElement;
-                if (fb) fb.style.display = 'flex';
+                img.src = '/gallery/logo.png';
+                img.onerror = () => {
+                  img.style.display = 'none';
+                  const fb = img.nextElementSibling as HTMLElement;
+                  if (fb) fb.style.display = 'flex';
+                };
               }}
             />
-            <div className="hidden w-24 h-24 items-center justify-center text-5xl">✂️</div>
+            <div className="hidden w-40 h-40 items-center justify-center text-7xl">✂️</div>
           </motion.div>
         </div>
-        <div className="absolute w-60 h-60 rounded-full pointer-events-none"
+        <div className="absolute w-80 h-80 rounded-full pointer-events-none"
           style={{
             background: `radial-gradient(circle, rgba(201,168,76,0.3) 0%, transparent 70%)`,
-            filter: 'blur(30px)',
+            filter: 'blur(40px)',
           }} />
       </div>
 
@@ -327,9 +330,9 @@ function HeroSection({ isRTL, onChatOpen }: { isRTL: boolean; onChatOpen: () => 
         <motion.p
           initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5, duration: 0.7 }}
-          className="text-base md:text-lg font-medium mb-10 max-w-xl mx-auto leading-relaxed"
-          style={{ color: BRAND.silver }}>
-          {isRTL ? 'حلاقة احترافية وعناية فائقة في البحرين' : 'Premium Grooming & Professional Barber Services in Bahrain'}
+          className="text-sm md:text-base font-semibold mb-12 max-w-lg mx-auto leading-loose tracking-widest uppercase"
+          style={{ color: 'rgba(201,168,76,0.65)', letterSpacing: '0.18em' }}>
+          {isRTL ? '— حلاقة احترافية · عناية فائقة · البحرين —' : '— Premium Grooming · Professional Care · Bahrain —'}
         </motion.p>
 
         {/* CTA buttons */}
@@ -369,18 +372,26 @@ function HeroSection({ isRTL, onChatOpen }: { isRTL: boolean; onChatOpen: () => 
           </a>
         </motion.div>
 
-        {/* Scroll indicator */}
+        {/* Scroll indicator — clear separation from buttons */}
         <motion.div
-          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.2 }}
-          className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
-          <span className="text-[10px] tracking-[0.3em] uppercase" style={{ color: 'rgba(201,168,76,0.5)' }}>
-            {isRTL ? 'اكتشف المزيد' : 'Discover'}
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.4 }}
+          className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 pointer-events-none">
+          <span className="text-[9px] font-black tracking-[0.5em] uppercase px-3 py-1 rounded-full"
+            style={{
+              color: 'rgba(201,168,76,0.6)',
+              background: 'rgba(201,168,76,0.06)',
+              border: '1px solid rgba(201,168,76,0.12)',
+              letterSpacing: '0.5em',
+            }}>
+            {isRTL ? 'اكتشف المزيد' : 'DISCOVER'}
           </span>
           <motion.div
             animate={{ y: [0, 8, 0] }}
-            transition={{ duration: 2, repeat: Infinity }}
-            className="w-px h-8 rounded-full"
-            style={{ background: `linear-gradient(to bottom, ${BRAND.gold}, transparent)` }} />
+            transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
+            className="flex flex-col items-center gap-1">
+            <div className="w-px h-6 rounded-full" style={{ background: `linear-gradient(to bottom, ${BRAND.gold}, transparent)` }} />
+            <div className="w-1.5 h-1.5 rounded-full" style={{ background: BRAND.gold, boxShadow: `0 0 6px ${BRAND.gold}` }} />
+          </motion.div>
         </motion.div>
       </div>
     </section>
@@ -688,18 +699,19 @@ function ChatInterface({ isRTL, t }: { isRTL: boolean; t: any }) {
         ? `أنت مساعد حجز ذكي لـ Twin Scissors Barbershop في البحرين. مهمتك مساعدة العملاء في الحجز وإعطاء معلومات عن الخدمات والأسعار. الخدمات: قص الشعر 11 BD، حلاقة 5.5 BD، تصفيف شعر 7.7 BD، صباغة شعر 27.5 BD، تقشير الرأس 7.7/16.5 BD، العناية بالوجه 27.5 BD، تقشير الوجه 5.5 BD، مانيكير 11 BD، بديكير 13.2 BD، تقشير القدم 5.5 BD، تدليك القدم 5.5 BD، قص أظافر اليد 3.3 BD، قص أظافر القدم 4.4 BD. ساعات العمل: الاثنين-الجمعة 10 ص-9 م، السبت 10 ص-9 م، الأحد 10 ص-7:30 م. للحجز: https://wa.me/97317000900. العنوان: Rd 4625, Manama 973, Bahrain. كن ودودًا ومهنيًا وأجب باللغة العربية.`
         : `You are a smart booking assistant for Twin Scissors Barbershop in Bahrain. Help customers book appointments and provide info about services and prices. Services: Hair Cut 11 BD, Shave 5.5 BD, Hair Style 7.7 BD, Hair Color 27.5 BD, Scalp Scraping 7.7/16.5 BD, Facial 27.5 BD, Face Scraping 5.5 BD, Manicure 11 BD, Pedicure 13.2 BD, Foot Scraping 5.5 BD, Foot Massage 5.5 BD, Hand Nails Cutting 3.3 BD, Foot Nails Cutting 4.4 BD. Hours: Mon-Sat 10 AM-9 PM, Sun 10 AM-7:30 PM. To book: https://wa.me/97317000900. Address: Rd 4625, Manama 973, Bahrain. Be friendly, professional.`;
 
-      // Build conversation history for Gemini multi-turn format
-      const history = messages
-        .slice(0, -0) // all messages so far (before new user msg)
-        .map(m => ({
-          role: m.role === 'user' ? 'user' : 'model',
-          parts: [{ text: m.text }],
-        }));
-      // Add the new user message at the end
-      const contents = [...history, { role: 'user', parts: [{ text }] }];
+      // Build conversation history — Gemini needs strictly alternating user/model
+      // Skip the first bot welcome message (index 0), only include real exchanges
+      const pastMessages = messages.slice(1); // drop bot welcome
+      const contents: { role: string; parts: { text: string }[] }[] = [];
+      for (const m of pastMessages) {
+        contents.push({ role: m.role === 'user' ? 'user' : 'model', parts: [{ text: m.text }] });
+      }
+      contents.push({ role: 'user', parts: [{ text }] });
 
       const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
-      if (!apiKey) throw new Error('Missing VITE_GEMINI_API_KEY');
+      if (!apiKey) {
+        throw new Error('API key not configured. Please set VITE_GEMINI_API_KEY in Vercel environment variables.');
+      }
 
       const res = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
@@ -714,13 +726,16 @@ function ChatInterface({ isRTL, t }: { isRTL: boolean; t: any }) {
         }
       );
       const data = await res.json();
-      if (!res.ok) throw new Error(data?.error?.message || 'Gemini error');
+      if (!res.ok) {
+        throw new Error(data?.error?.message || `HTTP ${res.status}`);
+      }
       const reply =
         data.candidates?.[0]?.content?.parts?.[0]?.text ||
         (isRTL ? 'عذراً، حدث خطأ.' : 'Sorry, something went wrong.');
       setMessages(prev => [...prev, { role: 'bot', text: reply }]);
-    } catch {
-      setMessages(prev => [...prev, { role: 'bot', text: isRTL ? 'تعذر الاتصال. يرجى المحاولة مجدداً.' : 'Connection failed. Please try again.' }]);
+    } catch (err: any) {
+      const msg = err?.message || 'Unknown error';
+      setMessages(prev => [...prev, { role: 'bot', text: isRTL ? `خطأ: ${msg}` : `Error: ${msg}` }]);
     } finally {
       setIsTyping(false);
     }
@@ -873,11 +888,15 @@ export default function App() {
 
               {/* Logo */}
               <div className="flex items-center gap-3 flex-shrink-0 group cursor-pointer">
-                <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0"
-                  style={{ border: `2px solid rgba(201,168,76,0.5)`, boxShadow: `0 0 14px rgba(201,168,76,0.25)` }}>
-                  <img src="/gallery/logo.png" alt="Twin Scissors"
+                <div className="relative w-12 h-12 rounded-full overflow-hidden flex-shrink-0"
+                  style={{ border: `2px solid rgba(201,168,76,0.6)`, boxShadow: `0 0 18px rgba(201,168,76,0.35)` }}>
+                  <img src="/gallery/logo.webp" alt="Twin Scissors"
                     className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300"
-                    onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                    onError={e => {
+                      const img = e.target as HTMLImageElement;
+                      img.src = '/gallery/logo.png';
+                      img.onerror = () => { img.style.display = 'none'; };
+                    }}
                   />
                 </div>
                 <div className="hidden sm:block">
