@@ -242,7 +242,7 @@ function HeroSection({ isRTL, onChatOpen }: { isRTL: boolean; onChatOpen: () => 
         style={{ background: `radial-gradient(circle, rgba(201,168,76,0.08) 0%, transparent 70%)`, filter: 'blur(50px)', animation: 'floatOrb 12s ease-in-out infinite reverse' }} />
 
       {/* Hero Content */}
-      <div className="relative z-10 text-center max-w-5xl mx-auto px-4 pt-28 pb-20">
+      <div className="relative z-10 text-center max-w-5xl mx-auto px-4 pt-28 pb-36 sm:pb-40">
 
         {/* Rating pill */}
         <motion.div
@@ -344,7 +344,7 @@ function HeroSection({ isRTL, onChatOpen }: { isRTL: boolean; onChatOpen: () => 
           {/* Primary — Book via WhatsApp */}
           <a href={`https://wa.me/97317000900?text=${encodeURIComponent(isRTL ? 'السلام عليكم، أريد الحجز' : 'Hello, I would like to book an appointment')}`}
             target="_blank" rel="noopener noreferrer"
-            className="relative overflow-hidden group flex items-center gap-3 px-8 py-4 rounded-2xl font-black text-sm tracking-widest uppercase transition-transform duration-200 hover:scale-105"
+            className="relative overflow-hidden group flex items-center gap-3 px-8 py-4 rounded-2xl font-black text-sm tracking-widest uppercase transition-transform duration-200 hover:scale-105 w-full sm:w-auto justify-center"
             style={{
               background: `linear-gradient(135deg, ${BRAND.gold}, ${BRAND.goldDark})`,
               color: '#0a0a0b',
@@ -360,7 +360,7 @@ function HeroSection({ isRTL, onChatOpen }: { isRTL: boolean; onChatOpen: () => 
           {/* Secondary — Directions */}
           <a href="https://www.google.com/maps/place/Twin+scissors+barbershop+%23bahrain/@26.2402735,50.5738485,15z/data=!4m17!1m10!3m9!1s0x3e49a5fbd2ccf531:0x59990426e9da287c!2sTwin+scissors+barbershop+%23bahrain!8m2!3d26.2402735!4d50.5738485!10e5!14m1!1BCgIgAQ!16s%2Fg%2F11xfydrhwx!3m5!1s0x3e49a5fbd2ccf531:0x59990426e9da287c!8m2!3d26.2402735!4d50.5738485!16s%2Fg%2F11xfydrhwx?entry=ttu"
             target="_blank" rel="noopener noreferrer"
-            className="flex items-center gap-3 px-8 py-4 rounded-2xl font-black text-sm tracking-widest uppercase transition-all duration-200 hover:scale-105"
+            className="flex items-center gap-3 px-8 py-4 rounded-2xl font-black text-sm tracking-widest uppercase transition-all duration-200 hover:scale-105 w-full sm:w-auto justify-center"
             style={{
               background: 'rgba(255,255,255,0.05)',
               border: `1px solid rgba(201,168,76,0.30)`,
@@ -372,28 +372,30 @@ function HeroSection({ isRTL, onChatOpen }: { isRTL: boolean; onChatOpen: () => 
           </a>
         </motion.div>
 
-        {/* Scroll indicator — clear separation from buttons */}
-        <motion.div
-          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.4 }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 pointer-events-none">
-          <span className="text-[9px] font-black tracking-[0.5em] uppercase px-3 py-1 rounded-full"
-            style={{
-              color: 'rgba(201,168,76,0.6)',
-              background: 'rgba(201,168,76,0.06)',
-              border: '1px solid rgba(201,168,76,0.12)',
-              letterSpacing: '0.5em',
-            }}>
-            {isRTL ? 'اكتشف المزيد' : 'DISCOVER'}
-          </span>
-          <motion.div
-            animate={{ y: [0, 8, 0] }}
-            transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
-            className="flex flex-col items-center gap-1">
-            <div className="w-px h-6 rounded-full" style={{ background: `linear-gradient(to bottom, ${BRAND.gold}, transparent)` }} />
-            <div className="w-1.5 h-1.5 rounded-full" style={{ background: BRAND.gold, boxShadow: `0 0 6px ${BRAND.gold}` }} />
-          </motion.div>
-        </motion.div>
       </div>
+
+      {/* Scroll indicator — outside content div, anchored to section bottom, never overlaps */}
+      <motion.div
+        initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.4 }}
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-3 pointer-events-none">
+        <span className="text-[9px] font-black uppercase px-4 py-1.5 rounded-full"
+          style={{
+            color: 'rgba(201,168,76,0.7)',
+            background: 'rgba(0,0,0,0.5)',
+            border: '1px solid rgba(201,168,76,0.2)',
+            letterSpacing: '0.45em',
+            backdropFilter: 'blur(8px)',
+          }}>
+          {isRTL ? 'اكتشف' : 'DISCOVER'}
+        </span>
+        <motion.div
+          animate={{ y: [0, 8, 0] }}
+          transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
+          className="flex flex-col items-center gap-1">
+          <div className="w-px h-7 rounded-full" style={{ background: `linear-gradient(to bottom, ${BRAND.gold}, transparent)` }} />
+          <div className="w-1.5 h-1.5 rounded-full" style={{ background: BRAND.gold, boxShadow: `0 0 8px ${BRAND.gold}` }} />
+        </motion.div>
+      </motion.div>
     </section>
   );
 }
