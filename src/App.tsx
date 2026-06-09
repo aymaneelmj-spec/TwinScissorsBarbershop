@@ -116,7 +116,7 @@ function LoadingScreen({ isRTL }: { isRTL: boolean }) {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.3, duration: 0.6, type: 'spring', damping: 12 }}>
             <img
-              src="/gallery/logo.png"
+              src="/gallery/logo.webp"
               alt="Twin Scissors"
               className="w-28 h-28 object-contain"
               onError={e => {
